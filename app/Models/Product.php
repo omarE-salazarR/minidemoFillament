@@ -16,7 +16,19 @@ class Product extends Model
         'description',
         'price',
         'quantity',
+        'provider_name',
     ];
+
+    /**
+    * Obtiene los productos cuyo stock sea mayor a cero
+    *
+    */
+    public static function withStock()
+    {
+        return self::whereHas('quantities', function ($query) {
+            $query->where('quantity', '>', 0);
+        })->pluck('name', 'id');
+    }
 
     /**
     * Acciones del modelo
@@ -87,6 +99,16 @@ class Product extends Model
     {
         return $this->hasMany(ProductQuantity::class);
     }
+
+     /**
+    * Relacion con Providers
+    *
+    */
+    public function providers(): HasMany
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
 
     
 }

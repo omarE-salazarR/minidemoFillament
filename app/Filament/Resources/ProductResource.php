@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
+use App\Models\Provider;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -37,10 +38,11 @@ class ProductResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')->required(),
-                Textarea::make('description')->required(),
                 TextInput::make('price')->numeric()->required(),
-                TextInput::make('quantity')->numeric()->required()
-            ]);
+                TextInput::make('quantity')->numeric()->required(),
+                Select::make('provider_name')->label('Customer')->options(Provider::all()->pluck('name', 'name'))->required(),
+                Textarea::make('description')->required(),
+            ])->columns(3);
     }
 
     /**
@@ -53,7 +55,7 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->label('Name')->sortable()->searchable(),
-                TextColumn::make('description')->label('Description'),
+                TextColumn::make('provider_name')->label('Provider'),
                 TextColumn::make('price')->label('Price')->sortable(),
                 TextColumn::make('quantity')->label('Stock')->getStateUsing(function ($record) {
                     return $record->quantities()->latest()->value('quantity') ?? 0;

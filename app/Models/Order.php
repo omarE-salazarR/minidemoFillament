@@ -10,7 +10,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['order_date', 'total'];
+    protected $fillable = ['order_date', 'total', 'customer_name'];
 
 
     /**
@@ -42,6 +42,15 @@ class Order extends Model
     *
     */
     public function orderDetails(): HasMany
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
+    /**
+    * Relacion con cliente
+    *
+    */
+    public function customers(): HasMany
     {
         return $this->hasMany(OrderDetail::class);
     }

@@ -6,6 +6,7 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Customer;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -39,18 +40,17 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('total')->label('Total Order')->disabled()->numeric(),
                 Repeater::make('orderDetails')
                     ->relationship('orderDetails')
                     ->schema([
                         Select::make('product_id')
-                            ->label('Product')->options(Product::all()->pluck('name', 'id'))->required()->reactive() 
+                            ->label('Product')->options(Product::withStock())->required()->reactive() 
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                            $product = Product::find($state);
-                            $set('price', $product ? $product->price : 0);
-                            $set('product_name', $product ? $product->name : '');
-                            $quantity = $get('quantity');
-                            $set('total', $quantity * ($product ? $product->price : 0));
+                                $product = Product::find($state);
+                                $set('price', $product ? $product->price : 0);
+                                $set('product_name', $product ? $product->name : '');
+                                $quantity = $get('quantity');
+                                $set('total', $quantity * ($product ? $product->price : 0));
                             }),
                         TextInput::make('quantity')->numeric()->required()->reactive() 
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
@@ -63,6 +63,8 @@ class OrderResource extends Resource
                         TextInput::make('total')->numeric()->disabled()->formatStateUsing(fn ($state) => number_format($state, 2)),
                         TextInput::make('product_name')->label(false)->extraAttributes(['style' => 'visibility: hidden;'])->dehydrated(),
                     ])->columns(3),
+                    Select::make('customer_name')->label('Customer')->options(Customer::all()->pluck('name', 'name'))->required(),
+                    TextInput::make('total')->label('Total Order')->disabled()->numeric(),
             ]);
     }
 
@@ -75,8 +77,9 @@ class OrderResource extends Resource
     {
         return $table
         ->columns([
+            TextColumn::make('customer_name')->label('Customer')->sortable()->searchable(),
             TextColumn::make('order_date')->label('Order Date')->sortable()->searchable(),
-            TextColumn::make('total')->label('Total')->sortable()->searchable(),
+            TextColumn::make('total')->label('Total Order')->sortable()->searchable(),
             TextColumn::make('orderDetails')
                 ->label('Order Details')
                 ->formatStateUsing(function ($record) {

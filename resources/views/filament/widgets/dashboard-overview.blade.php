@@ -1,4 +1,4 @@
-<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
+<div class="grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-4">
     <x-stats-card
         title="Total Products"
         value="{{ $productsCount }}"
@@ -9,11 +9,21 @@
         value="{{ $ordersCount }}"
         icon="heroicon-o-shopping-cart"
     />
+    <x-stats-card
+        title="Customers"
+        value="{{ $customersCount }}"
+        icon="heroicon-o-user"
+    />
+    <x-stats-card
+        title="Providers"
+        value="{{ $providersCount }}"
+        icon="heroicon-o-briefcase"
+    />
 </div>
 
 <div class="mt-6">
     <x-filament::card>
-        <h2 class="text-xl font-bold">Orders History</h2>
+        <h2 class="text-xl font-bold">Orders History / Date</h2>
         <div id="orders-history-chart"></div>
     </x-filament::card>
 </div>

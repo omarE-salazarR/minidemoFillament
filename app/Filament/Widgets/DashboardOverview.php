@@ -3,6 +3,8 @@ namespace App\Filament\Widgets;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Provider;
+use App\Models\Customer;
 use Filament\Widgets\Widget;
 
 class DashboardOverview extends Widget
@@ -21,10 +23,14 @@ class DashboardOverview extends Widget
             ->groupBy('date')
             ->orderBy('date')
             ->get();
+        $customersCount = Customer::count();
+        $providersCount = Provider::count();
         return [
             'productsCount' => $productsCount,
             'ordersCount' => $ordersCount,
             'ordersHistory' => $ordersHistory,
+            'providersCount' => $providersCount,
+            'customersCount' => $customersCount
         ];
     }
 }
